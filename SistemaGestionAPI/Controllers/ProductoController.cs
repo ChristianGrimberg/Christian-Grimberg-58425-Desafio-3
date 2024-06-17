@@ -23,8 +23,8 @@ public class ProductoController : ControllerBase
   }
 
   [HttpDelete(Name = "EliminarProducto")]
-  public void EliminarProducto([FromBody] Producto producto)
+  public void EliminarProducto([FromBody] int id)
   {
-    ProductoBussiness.EliminarProducto(Connection.DatabaseConnection, producto);
+    ProductoBussiness.EliminarProducto(Connection.DatabaseConnection, ProductoBussiness.ObtenerProducto(Connection.DatabaseConnection, id));
   }
 }

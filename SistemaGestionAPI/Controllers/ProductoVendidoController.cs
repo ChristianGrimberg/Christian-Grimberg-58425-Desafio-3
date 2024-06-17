@@ -10,9 +10,4 @@ namespace Christian_Grimberg_58425_Desafio_3;
 [Route("api/[controller]")]
 public class ProductoVendidoController : ControllerBase
 {
-  [HttpGet(Name = "ObtenerProductosVendidos")]
-  public IEnumerable<ProductoVendido> ObtenerProductoVendido()
-  {
-    return ProductoVendidoBussiness.ListarProductosVendidos(Connection.DatabaseConnection);
-  }
 }
