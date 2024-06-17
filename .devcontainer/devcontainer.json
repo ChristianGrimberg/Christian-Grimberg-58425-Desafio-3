@@ -36,7 +36,8 @@
 				"eamodio.gitlens",
 				"ms-dotnettools.csdevkit",
 				"github.vscode-github-actions",
-				"DavidAnson.vscode-markdownlint"
+				"DavidAnson.vscode-markdownlint",
+				"rangav.vscode-thunder-client"
 			]
 		}
 	},
