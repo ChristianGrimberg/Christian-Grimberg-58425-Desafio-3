@@ -14,9 +14,15 @@ namespace Christian_Grimberg_58425_Desafio_3.Controllers;
 [Route("api/[controller]")]
 public class UsuarioController : ControllerBase
 {
-  [HttpGet]
+  [HttpGet (Name = "GetUsuarios")]
   public IEnumerable<Usuario> GetUsuarios()
   {
     return UsuarioBussiness.ListarUsuarios(Connection.DatabaseConnection).ToArray();
+  }
+
+  [HttpGet ("{id}")]
+  public IActionResult GetUsuarioById(int id)
+  {
+    return Ok(UsuarioBussiness.ObtenerUsuario(Connection.DatabaseConnection, id));
   }
 }
