@@ -6,10 +6,10 @@ namespace SistemaGestionData;
 
 public static class ProductoData
 {
-    public static Producto ObtenerProducto(SqlConnection connection, int id)
-    {
-        Producto product = new Producto();
-        string queryGetProductoByID = $@"
+  public static Producto ObtenerProducto(SqlConnection connection, int id)
+  {
+    Producto product = new Producto();
+    string queryGetProductoByID = $@"
 		SELECT
 			[Id]
 			,[Descripciones]
@@ -21,40 +21,40 @@ public static class ProductoData
 		WHERE [Producto].[Id] = '{id.ToString()}';
 		";
 
-        try
+    try
+    {
+      using (SqlCommand command = new SqlCommand(queryGetProductoByID, connection))
+      {
+        using (SqlDataReader dataReader = command.ExecuteReader())
         {
-            using (SqlCommand command = new SqlCommand(queryGetProductoByID, connection))
-            {
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    if (dataReader.Read())
-                    {
-                        product.Id = Convert.ToInt32(dataReader["Id"]);
-                        product.Descripcion = dataReader["Descripciones"].ToString();
-                        product.Costo = Convert.ToDecimal(dataReader["Costo"]);
-                        product.PrecioVenta = Convert.ToDecimal(dataReader["PrecioVenta"]);
-                        product.Stock = Convert.ToInt32(dataReader["Stock"]);
-                        product.IdUsuario = Convert.ToInt32(dataReader["IdUsuario"]);
-                    }
-                    else
-                    {
-                        Console.WriteLine("No se encuentra el producto con el ID {0}\n", id);
-                    }
-                }
-            }
+          if (dataReader.Read())
+          {
+            product.Id = Convert.ToInt32(dataReader["Id"]);
+            product.Descripcion = dataReader["Descripciones"].ToString();
+            product.Costo = Convert.ToDecimal(dataReader["Costo"]);
+            product.PrecioVenta = Convert.ToDecimal(dataReader["PrecioVenta"]);
+            product.Stock = Convert.ToInt32(dataReader["Stock"]);
+            product.IdUsuario = Convert.ToInt32(dataReader["IdUsuario"]);
+          }
+          else
+          {
+            Console.WriteLine("No se encuentra el producto con el ID {0}\n", id);
+          }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
-        }
-
-        return product;
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
     }
 
-    public static List<Producto> ListarProductos(SqlConnection connection)
-    {
-        List<Producto> listado = new List<Producto>();
-        string queryGetProducts = $@"
+    return product;
+  }
+
+  public static List<Producto> ListarProductos(SqlConnection connection)
+  {
+    List<Producto> listado = new List<Producto>();
+    string queryGetProducts = $@"
 		SELECT
 			[Id]
 			,[Descripciones]
@@ -65,39 +65,39 @@ public static class ProductoData
 		FROM [{connection.Database}].[dbo].[Producto]
     ";
 
-        try
+    try
+    {
+      using (SqlCommand command = new SqlCommand(queryGetProducts, connection))
+      {
+        using (SqlDataReader dataReader = command.ExecuteReader())
         {
-            using (SqlCommand command = new SqlCommand(queryGetProducts, connection))
-            {
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        Producto product = new Producto();
-                        product.Id = Convert.ToInt32(dataReader["Id"]);
-                        product.Descripcion = dataReader["Descripciones"].ToString();
-                        product.Costo = Convert.ToDecimal(dataReader["Costo"]);
-                        product.PrecioVenta = Convert.ToDecimal(dataReader["PrecioVenta"]);
-                        product.Stock = Convert.ToInt32(dataReader["Stock"]);
-                        product.IdUsuario = Convert.ToInt32(dataReader["IdUsuario"]);
+          while (dataReader.Read())
+          {
+            Producto product = new Producto();
+            product.Id = Convert.ToInt32(dataReader["Id"]);
+            product.Descripcion = dataReader["Descripciones"].ToString();
+            product.Costo = Convert.ToDecimal(dataReader["Costo"]);
+            product.PrecioVenta = Convert.ToDecimal(dataReader["PrecioVenta"]);
+            product.Stock = Convert.ToInt32(dataReader["Stock"]);
+            product.IdUsuario = Convert.ToInt32(dataReader["IdUsuario"]);
 
-                        listado.Add(product);
-                    }
-                }
-            }
+            listado.Add(product);
+          }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
-        }
-
-        return listado;
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
     }
 
-    public static bool CrearProducto(SqlConnection connection, Producto product)
-    {
-        bool created = false;
-        string queryInsertProduct = $@"
+    return listado;
+  }
+
+  public static bool CrearProducto(SqlConnection connection, Producto product)
+  {
+    bool created = false;
+    string queryInsertProduct = $@"
 		INSERT INTO [{connection.Database}].[dbo].[Producto] (
 			[Descripciones]
 			,[Costo]
@@ -114,25 +114,25 @@ public static class ProductoData
 		);
 		";
 
-        try
-        {
-            using (SqlCommand command = new SqlCommand(queryInsertProduct, connection))
-            {
-                created = (command.ExecuteNonQuery() > 0);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
-        }
-
-        return created;
+    try
+    {
+      using (SqlCommand command = new SqlCommand(queryInsertProduct, connection))
+      {
+        created = (command.ExecuteNonQuery() > 0);
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
     }
 
-    public static bool ModificarProducto(SqlConnection connection, Producto product)
-    {
-        bool created = false;
-        string queryUpdateProduct = $@"
+    return created;
+  }
+
+  public static bool ModificarProducto(SqlConnection connection, Producto product)
+  {
+    bool created = false;
+    string queryUpdateProduct = $@"
 		UPDATE [{connection.Database}].[dbo].[Producto]
 		SET
       [Descripciones] = '{product.Descripcion}'
@@ -143,25 +143,25 @@ public static class ProductoData
 		WHERE [Id] = '{product.Id}';
 		";
 
-        try
-        {
-            using (SqlCommand command = new SqlCommand(queryUpdateProduct, connection))
-            {
-                created = (command.ExecuteNonQuery() > 0);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
-        }
-
-        return created;
+    try
+    {
+      using (SqlCommand command = new SqlCommand(queryUpdateProduct, connection))
+      {
+        created = (command.ExecuteNonQuery() > 0);
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
     }
 
-    public static bool EliminarProducto(SqlConnection connection, Producto product)
-    {
-        bool created = false;
-        string queryDeleteProduct = $@"
+    return created;
+  }
+
+  public static bool EliminarProducto(SqlConnection connection, Producto product)
+  {
+    bool created = false;
+    string queryDeleteProduct = $@"
 		DELETE FROM [{connection.Database}].[dbo].[ProductoVendido]
 		WHERE [IdProducto] IN (SELECT [Id]
 												FROM [{connection.Database}].[dbo].[Producto]
@@ -171,18 +171,18 @@ public static class ProductoData
 		WHERE [Id] = '{product.Id}';
 		";
 
-        try
-        {
-            using (SqlCommand command = new SqlCommand(queryDeleteProduct, connection))
-            {
-                created = (command.ExecuteNonQuery() > 0);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
-        }
-
-        return created;
+    try
+    {
+      using (SqlCommand command = new SqlCommand(queryDeleteProduct, connection))
+      {
+        created = (command.ExecuteNonQuery() > 0);
+      }
     }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
+    }
+
+    return created;
+  }
 }

@@ -6,10 +6,10 @@ namespace SistemaGestionData;
 
 public static class UsuarioData
 {
-    public static Usuario ObtenerUsuario(SqlConnection connection, int id)
-    {
-        Usuario user = new Usuario();
-        string queryGetUserByID = $@"
+  public static Usuario ObtenerUsuario(SqlConnection connection, int id)
+  {
+    Usuario user = new Usuario();
+    string queryGetUserByID = $@"
         SELECT
             [Id]
             ,[Nombre]
@@ -21,40 +21,40 @@ public static class UsuarioData
         WHERE [Id] = '{id.ToString()}';
         ";
 
-        try
+    try
+    {
+      using (SqlCommand command = new SqlCommand(queryGetUserByID, connection))
+      {
+        using (SqlDataReader dataReader = command.ExecuteReader())
         {
-            using (SqlCommand command = new SqlCommand(queryGetUserByID, connection))
-            {
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    if (dataReader.Read())
-                    {
-                        user.Id = Convert.ToInt32(dataReader["Id"]);
-                        user.Nombre = dataReader["Nombre"].ToString();
-                        user.Apellido = dataReader["Apellido"].ToString();
-                        user.NombreUsuario = dataReader["NombreUsuario"].ToString();
-                        user.Contraseña = dataReader["Contraseña"].ToString();
-                        user.Mail = dataReader["Mail"].ToString();
-                    }
-                    else
-                    {
-                        Console.WriteLine("No se encuentra el usuario con el ID {0}\n", id);
-                    }
-                }
-            }
+          if (dataReader.Read())
+          {
+            user.Id = Convert.ToInt32(dataReader["Id"]);
+            user.Nombre = dataReader["Nombre"].ToString();
+            user.Apellido = dataReader["Apellido"].ToString();
+            user.NombreUsuario = dataReader["NombreUsuario"].ToString();
+            user.Contraseña = dataReader["Contraseña"].ToString();
+            user.Mail = dataReader["Mail"].ToString();
+          }
+          else
+          {
+            Console.WriteLine("No se encuentra el usuario con el ID {0}\n", id);
+          }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
-        }
-
-        return user;
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
     }
 
-    public static List<Usuario> ListarUsuarios(SqlConnection connection)
-    {
-        List<Usuario> listado = new List<Usuario>();
-        string queryGetUsers = $@"
+    return user;
+  }
+
+  public static List<Usuario> ListarUsuarios(SqlConnection connection)
+  {
+    List<Usuario> listado = new List<Usuario>();
+    string queryGetUsers = $@"
 		SELECT
             [Id]
             ,[Nombre]
@@ -65,39 +65,39 @@ public static class UsuarioData
 		FROM [{connection.Database}].[dbo].[Usuario];
         ";
 
-        try
+    try
+    {
+      using (SqlCommand command = new SqlCommand(queryGetUsers, connection))
+      {
+        using (SqlDataReader dataReader = command.ExecuteReader())
         {
-            using (SqlCommand command = new SqlCommand(queryGetUsers, connection))
-            {
-                using (SqlDataReader dataReader = command.ExecuteReader())
-                {
-                    while (dataReader.Read())
-                    {
-                        Usuario user = new Usuario();
-                        user.Id = Convert.ToInt32(dataReader["Id"]);
-                        user.Nombre = dataReader["Nombre"].ToString();
-                        user.Apellido = dataReader["Apellido"].ToString();
-                        user.NombreUsuario = dataReader["NombreUsuario"].ToString();
-                        user.Contraseña = dataReader["Contraseña"].ToString();
-                        user.Mail = dataReader["Mail"].ToString();
+          while (dataReader.Read())
+          {
+            Usuario user = new Usuario();
+            user.Id = Convert.ToInt32(dataReader["Id"]);
+            user.Nombre = dataReader["Nombre"].ToString();
+            user.Apellido = dataReader["Apellido"].ToString();
+            user.NombreUsuario = dataReader["NombreUsuario"].ToString();
+            user.Contraseña = dataReader["Contraseña"].ToString();
+            user.Mail = dataReader["Mail"].ToString();
 
-                        listado.Add(user);
-                    }
-                }
-            }
+            listado.Add(user);
+          }
         }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
-        }
-
-        return listado;
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
     }
 
-    public static bool CrearUsuario(SqlConnection connection, Usuario user)
-    {
-        bool created = false;
-        string queryInsertUser = $@"
+    return listado;
+  }
+
+  public static bool CrearUsuario(SqlConnection connection, Usuario user)
+  {
+    bool created = false;
+    string queryInsertUser = $@"
         INSERT INTO [{connection.Database}].[dbo].[Usuario] (
             [Nombre]
             ,[Apellido]
@@ -114,25 +114,25 @@ public static class UsuarioData
         );
         ";
 
-        try
-        {
-            using (SqlCommand command = new SqlCommand(queryInsertUser, connection))
-            {
-                created = (command.ExecuteNonQuery() > 0);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
-        }
-
-        return created;
+    try
+    {
+      using (SqlCommand command = new SqlCommand(queryInsertUser, connection))
+      {
+        created = (command.ExecuteNonQuery() > 0);
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
     }
 
-    public static bool ModificarUsuario(SqlConnection connection, Usuario user)
-    {
-        bool created = false;
-        string queryUpdatetUser = $@"
+    return created;
+  }
+
+  public static bool ModificarUsuario(SqlConnection connection, Usuario user)
+  {
+    bool created = false;
+    string queryUpdatetUser = $@"
         UPDATE [{connection.Database}].[dbo].[Usuario]
         SET
             [Nombre] = '{user.Nombre}'
@@ -143,25 +143,25 @@ public static class UsuarioData
         WHERE [Id] = '{user.Id}';
         ";
 
-        try
-        {
-            using (SqlCommand command = new SqlCommand(queryUpdatetUser, connection))
-            {
-                created = (command.ExecuteNonQuery() > 0);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
-        }
-
-        return created;
+    try
+    {
+      using (SqlCommand command = new SqlCommand(queryUpdatetUser, connection))
+      {
+        created = (command.ExecuteNonQuery() > 0);
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
     }
 
-    public static bool EliminarUsuario(SqlConnection connection, Usuario user)
-    {
-        bool created = false;
-        string queryDeleteUser = $@"
+    return created;
+  }
+
+  public static bool EliminarUsuario(SqlConnection connection, Usuario user)
+  {
+    bool created = false;
+    string queryDeleteUser = $@"
         DELETE FROM [{connection.Database}].[dbo].[ProductoVendido]
         WHERE [IdVenta] IN (SELECT [Id]
                             FROM [{connection.Database}].[dbo].[Venta]
@@ -182,18 +182,18 @@ public static class UsuarioData
         WHERE [Id] = '{user.Id}';
         ";
 
-        try
-        {
-            using (SqlCommand command = new SqlCommand(queryDeleteUser, connection))
-            {
-                created = (command.ExecuteNonQuery() > 0);
-            }
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
-        }
-
-        return created;
+    try
+    {
+      using (SqlCommand command = new SqlCommand(queryDeleteUser, connection))
+      {
+        created = (command.ExecuteNonQuery() > 0);
+      }
     }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
+    }
+
+    return created;
+  }
 }

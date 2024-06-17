@@ -4,48 +4,48 @@ namespace SistemaGestionData;
 
 public static class GestorBaseDatos
 {
-    public static SqlConnection Inicializacion(string server, string database, string user, string password)
+  public static SqlConnection Inicializacion(string server, string database, string user, string password)
+  {
+    string connectionString = $"Server={server}; User={user}; Password={password};";
+
+    SqlConnection connection = new SqlConnection(connectionString);
+    connection.Open();
+
+    try
     {
-        string connectionString = $"Server={server}; User={user}; Password={password};";
+      SqlCommand newDatabaseCommand = new SqlCommand(DeployDatabase(database), connection);
 
-        SqlConnection connection = new SqlConnection(connectionString);
-        connection.Open();
-
-        try
+      using (SqlDataReader newDatabaseReader = newDatabaseCommand.ExecuteReader())
+      {
+        while (newDatabaseReader.Read())
         {
-            SqlCommand newDatabaseCommand = new SqlCommand(DeployDatabase(database), connection);
-
-            using (SqlDataReader newDatabaseReader = newDatabaseCommand.ExecuteReader())
-            {
-                while (newDatabaseReader.Read())
-                {
-                    Console.WriteLine(string.Format("[SQL INFO]: {0}", newDatabaseReader[0]));
-                }
-            }
-
-            SqlCommand newTablesCommand = new SqlCommand(DeployDatabaseStructure(database), connection);
-
-            using (SqlDataReader newTablesReader = newTablesCommand.ExecuteReader())
-            {
-                while (newTablesReader.Read())
-                {
-                    Console.WriteLine(string.Format("[SQL INFO]: {0}", newTablesReader[0]));
-                }
-            }
+          Console.WriteLine(string.Format("[SQL INFO]: {0}", newDatabaseReader[0]));
         }
-        catch (Exception ex)
+      }
+
+      SqlCommand newTablesCommand = new SqlCommand(DeployDatabaseStructure(database), connection);
+
+      using (SqlDataReader newTablesReader = newTablesCommand.ExecuteReader())
+      {
+        while (newTablesReader.Read())
         {
-            Console.WriteLine($"[SQL ERROR]: {ex.Message}");
+          Console.WriteLine(string.Format("[SQL INFO]: {0}", newTablesReader[0]));
         }
-
-        connection.Close();
-
-        return connection;
+      }
+    }
+    catch (Exception ex)
+    {
+      Console.WriteLine($"[SQL ERROR]: {ex.Message}");
     }
 
-    private static string DeployDatabase(string baseDeDatos)
-    {
-        return $@"
+    connection.Close();
+
+    return connection;
+  }
+
+  private static string DeployDatabase(string baseDeDatos)
+  {
+    return $@"
         IF EXISTS(SELECT [name] FROM [sys].[databases] WHERE [name] = '{baseDeDatos}')
         BEGIN
             ALTER DATABASE [{baseDeDatos}] SET single_user with rollback immediate;
@@ -55,11 +55,11 @@ public static class GestorBaseDatos
         CREATE DATABASE [{baseDeDatos}];
         SELECT 'Conectado a la nueva base de datos [{baseDeDatos}]';
         ";
-    }
+  }
 
-    private static string DeployDatabaseStructure(string baseDeDatos)
-    {
-        return $@"
+  private static string DeployDatabaseStructure(string baseDeDatos)
+  {
+    return $@"
         CREATE TABLE [{baseDeDatos}].[dbo].[Producto](
             [Id] [bigint] IDENTITY(1,1) NOT NULL,
             [Descripciones] [varchar](max) NOT NULL,
@@ -159,5 +159,5 @@ public static class GestorBaseDatos
 
         SELECT 'Tablas y datos creados con exito en base de datos [{baseDeDatos}]';
         ";
-    }
+  }
 }
